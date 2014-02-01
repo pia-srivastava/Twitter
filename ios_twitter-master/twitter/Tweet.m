@@ -15,10 +15,31 @@
 }
 
 - (NSString *)username {
-//    return [self.data valueOrNilForKeyPath:@"user"];
     NSDictionary *userInfo = [self.data valueOrNilForKeyPath:@"user"];
     return [userInfo valueForKey:@"name"];
 }
+
+- (NSString *)handle {
+    NSDictionary *userInfo = [self.data valueOrNilForKeyPath:@"user"];
+    return [userInfo valueForKey:@"screen_name"];
+}
+
+
+- (NSString *)userphoto {
+    NSDictionary *userInfo = [self.data valueOrNilForKeyPath:@"user"];
+    return [userInfo valueForKey:@"profile_image_url"];
+}
+
+- (NSString *)retweetCount {
+    return [self.data valueOrNilForKeyPath:@"retweet_count"];
+}
+
+- (NSString *)retweetedBy {
+    NSDictionary *retweetedStatus = [self.data valueOrNilForKeyPath:@"retweeted_status"];
+    return [retweetedStatus valueForKey:@"contributors"];
+
+}
+
 
 + (NSMutableArray *)tweetsWithArray:(NSArray *)array {
     NSMutableArray *tweets = [[NSMutableArray alloc] initWithCapacity:array.count];

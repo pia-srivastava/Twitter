@@ -13,7 +13,7 @@
 @property (weak, nonatomic) IBOutlet UITextView *text;
 @property (weak, nonatomic) IBOutlet UILabel *username1;
 @property (weak, nonatomic) IBOutlet UILabel *handle;
-@property (weak, nonatomic) IBOutlet UILabel *usernamePlusStatus;
+@property (weak, nonatomic) IBOutlet UILabel *retweetedBy;
 @property (weak, nonatomic) IBOutlet UIImageView *userphoto;
 
 

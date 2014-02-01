@@ -15,7 +15,8 @@
 @property (nonatomic, strong, readonly) NSString *handle;
 @property (nonatomic, strong, readonly) NSString *usernamePlusStatus;
 @property (nonatomic,weak)NSString *userphoto;
-
+@property (nonatomic, strong, readonly) NSString *retweetedBy;
+@property (nonatomic, readonly) int retweetedCount;
 
 + (NSMutableArray *)tweetsWithArray:(NSArray *)array;
 

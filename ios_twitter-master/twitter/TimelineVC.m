@@ -18,6 +18,8 @@
 
 - (void)onSignOutButton;
 - (void)reload;
+- (void)onNewButton;
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 @end
 
@@ -27,7 +29,7 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        self.title = @"Twitter";
+        self.title = @"Home";
         
         [self reload];
     }
@@ -41,8 +43,11 @@
     //register TweetCell
     UINib *tweetNib = [UINib nibWithNibName:@"TweetCell" bundle:Nil];
     [self.tableView registerNib:tweetNib forCellReuseIdentifier:@"TweetCell"];
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sign Out" style:UIBarButtonItemStylePlain target:self action:@selector(onSignOutButton)];
+    UIColor *twitterBlue = [UIColor colorWithRed:64/255.0f green:153.0f/255.0f blue:255.0f/255.0f alpha:1.0f];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [[UINavigationBar appearance] setBarTintColor:twitterBlue];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sign Out" style:UIBarButtonItemStylePlain target:self action:@selector(onSignOutButton)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(onNewButton)];
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -78,13 +83,9 @@
     cell.username1.text = tweet.username;
     cell.text.text = tweet.text;
 
-//    NSURL *userphotoLink = [NSURL URLWithString:@"http://content7.flixster.com/movie/11/17/33/11173373_pro.jpg"];
-    NSString *l = tweet.userphoto;
-    NSLog(@"l is %@",l);
-        NSURL *userphotoLink = [NSURL URLWithString:tweet.userphoto];
-
+    //User photo
+    NSURL *userphotoLink = [NSURL URLWithString:tweet.userphoto];
     __weak UITableViewCell *weakCell = cell;
-    
     [cell.userphoto setImageWithURLRequest:[[NSURLRequest alloc] initWithURL:userphotoLink]
                           placeholderImage:[UIImage imageNamed:@"placeholder.png"]
                                    success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image){
@@ -103,8 +104,20 @@
                                    }];
     
 
+    //Screen name/handle
+    NSString *ampersand = @"@";
+    NSString *handlePlus = [ampersand stringByAppendingString:tweet.handle];
+    cell.handle.text = handlePlus;
     
+    //Retweeted by
+    int retweetedCount = tweet.retweetedCount;
+    NSLog(@"retweeted count is %i", retweetedCount);
+    NSLog(@"retweetedBy is %@",  tweet.retweetedBy);
     
+    if(retweetedCount > 0){
+        NSLog(@"retweetedBy is %@", tweet.retweetedBy);
+        cell.retweetedBy.text = tweet.retweetedBy;
+    }
     NSLog(@"tweet.from_user is %@",tweet.username );
     NSLog(@"tweet.text is %@",tweet.text );
     
@@ -222,9 +235,13 @@
     [User setCurrentUser:nil];
 }
 
+- (void)onNewButton {
+    NSLog(@"we clicked the new button, we really did!");
+}
+
 - (void)reload {
     [[TwitterClient instance] homeTimelineWithCount:20 sinceId:0 maxId:0 success:^(AFHTTPRequestOperation *operation, id response) {
-        NSLog(@"%@", response);
+        NSLog(@"The whole response is [%@]", response);
         self.tweets = [Tweet tweetsWithArray:response];
         [self.tableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
