@@ -8,6 +8,9 @@
 
 #import "TimelineVC.h"
 #import "TweetCell.h"
+#import "UIImageView+AFNetworking.h"
+#import <SystemConfiguration/SystemConfiguration.h>
+
 
 @interface TimelineVC ()
 
@@ -70,18 +73,19 @@
 {
     
     static NSString *CellIdentifier = @"TweetCell";
-    TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
+    TweetCell *cell = (TweetCell *) [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     Tweet *tweet = self.tweets[indexPath.row];
     cell.username1.text = tweet.username;
     cell.text.text = tweet.text;
-    NSURL *userphotoLink = [NSURL URLWithString:@"http://www.flickr.com/photos/cindyli/4799054041/"];
+    NSURL *userphotoLink = [NSURL URLWithString:@"http://content7.flixster.com/movie/11/17/33/11173373_pro.jpg"];
 
     __weak UITableViewCell *weakCell = cell;
-    [cell.userphoto setImageWithURLRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://www.flickr.com/photos/cindyli/4799054041/"]]
+    
+    [cell.userphoto setImageWithURLRequest:[[NSURLRequest alloc] initWithURL:userphotoLink]
                           placeholderImage:[UIImage imageNamed:@"placeholder.png"]
                                    success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image){
                                        weakCell.imageView.image = image;
+                                        NSLog(@"success Block");
                                        
                                        //only required if no placeholder is set to force the imageview on the cell to be laid out to house the new image.
                                        //if(weakCell.imageView.frame.size.height==0 || weakCell.imageView.frame.size.width==0 ){
@@ -89,6 +93,8 @@
                                        //}
                                    }
                                    failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error){
+                                       NSLog(@"failure Block");
+                                       NSLog(@"error is %@", error);
                                        
                                    }];
     
