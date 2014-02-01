@@ -10,7 +10,7 @@
 #import "TweetCell.h"
 #import "UIImageView+AFNetworking.h"
 #import <SystemConfiguration/SystemConfiguration.h>
-
+#import "TweetNewVC.h"
 
 @interface TimelineVC ()
 
@@ -19,7 +19,6 @@
 - (void)onSignOutButton;
 - (void)reload;
 - (void)onNewButton;
-#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 @end
 
@@ -43,10 +42,16 @@
     //register TweetCell
     UINib *tweetNib = [UINib nibWithNibName:@"TweetCell" bundle:Nil];
     [self.tableView registerNib:tweetNib forCellReuseIdentifier:@"TweetCell"];
+    
+    //Pretty it up
     UIColor *twitterBlue = [UIColor colorWithRed:64/255.0f green:153.0f/255.0f blue:255.0f/255.0f alpha:1.0f];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     [[UINavigationBar appearance] setBarTintColor:twitterBlue];
+    
+    //Sign Out
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sign Out" style:UIBarButtonItemStylePlain target:self action:@selector(onSignOutButton)];
+
+    //New Tweet!
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(onNewButton)];
     
     // Uncomment the following line to preserve selection between presentations.
@@ -237,6 +242,10 @@
 
 - (void)onNewButton {
     NSLog(@"we clicked the new button, we really did!");
+    
+    [self.navigationController pushViewController:[[TweetNewVC alloc] init] animated:YES];
+//    UIViewController *newTweet = [[UIViewController alloc] initWithNibName:@"TweetNew" bundle:[NSBundle mainBundle]];
+//    [self.view addSubview:newTweet.view];
 }
 
 - (void)reload {
