@@ -77,7 +77,11 @@
     Tweet *tweet = self.tweets[indexPath.row];
     cell.username1.text = tweet.username;
     cell.text.text = tweet.text;
-    NSURL *userphotoLink = [NSURL URLWithString:@"http://content7.flixster.com/movie/11/17/33/11173373_pro.jpg"];
+
+//    NSURL *userphotoLink = [NSURL URLWithString:@"http://content7.flixster.com/movie/11/17/33/11173373_pro.jpg"];
+    NSString *l = tweet.userphoto;
+    NSLog(@"l is %@",l);
+        NSURL *userphotoLink = [NSURL URLWithString:tweet.userphoto];
 
     __weak UITableViewCell *weakCell = cell;
     
