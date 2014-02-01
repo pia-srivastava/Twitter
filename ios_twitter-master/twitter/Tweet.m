@@ -14,8 +14,10 @@
     return [self.data valueOrNilForKeyPath:@"text"];
 }
 
-- (NSString *)from_user {
-    return [self.data valueOrNilForKeyPath:@"from_user"];
+- (NSString *)username {
+//    return [self.data valueOrNilForKeyPath:@"user"];
+    NSDictionary *userInfo = [self.data valueOrNilForKeyPath:@"user"];
+    return [userInfo valueForKey:@"name"];
 }
 
 + (NSMutableArray *)tweetsWithArray:(NSArray *)array {
