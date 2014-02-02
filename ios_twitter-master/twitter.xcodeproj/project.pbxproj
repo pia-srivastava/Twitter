@@ -12,6 +12,8 @@
 		10D20A1E189D7EF90090EC82 /* TweetDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 10D20A1D189D7EF90090EC82 /* TweetDetailViewController.m */; };
 		10D20A20189D84930090EC82 /* TweetNew.xib in Resources */ = {isa = PBXBuildFile; fileRef = 10D20A1F189D84930090EC82 /* TweetNew.xib */; };
 		10D20A23189D84B00090EC82 /* TweetNewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 10D20A22189D84B00090EC82 /* TweetNewVC.m */; };
+		10D20A27189DAA380090EC82 /* EditableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 10D20A25189DAA380090EC82 /* EditableCell.m */; };
+		10D20A28189DAA380090EC82 /* EditableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 10D20A26189DAA380090EC82 /* EditableCell.xib */; };
 		42C55E07181209DE000F9FCF /* TweetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 42CC89C017B0F03E00B6D34B /* TweetCell.xib */; };
 		42CC892C17AF4C6A00B6D34B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42CC892B17AF4C6A00B6D34B /* Foundation.framework */; };
 		42CC892E17AF4C6A00B6D34B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42CC892D17AF4C6A00B6D34B /* CoreGraphics.framework */; };
@@ -55,6 +57,9 @@
 		10D20A1F189D84930090EC82 /* TweetNew.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TweetNew.xib; sourceTree = "<group>"; };
 		10D20A21189D84B00090EC82 /* TweetNewVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweetNewVC.h; sourceTree = "<group>"; };
 		10D20A22189D84B00090EC82 /* TweetNewVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TweetNewVC.m; sourceTree = "<group>"; };
+		10D20A24189DAA380090EC82 /* EditableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableCell.h; sourceTree = "<group>"; };
+		10D20A25189DAA380090EC82 /* EditableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableCell.m; sourceTree = "<group>"; };
+		10D20A26189DAA380090EC82 /* EditableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditableCell.xib; sourceTree = "<group>"; };
 		42CC892817AF4C6A00B6D34B /* twitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = twitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		42CC892B17AF4C6A00B6D34B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		42CC892D17AF4C6A00B6D34B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -233,6 +238,8 @@
 				42CC89B017B0C7B800B6D34B /* Tweet.m */,
 				42CC89B217B0D63C00B6D34B /* RestObject.h */,
 				42CC89B317B0D63C00B6D34B /* RestObject.m */,
+				10D20A25189DAA380090EC82 /* EditableCell.m */,
+				10D20A24189DAA380090EC82 /* EditableCell.h */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -257,6 +264,7 @@
 		42CC89BC17B0EFEE00B6D34B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				10D20A26189DAA380090EC82 /* EditableCell.xib */,
 				42CC89BD17B0F02600B6D34B /* TweetCell.h */,
 				42CC89BE17B0F02600B6D34B /* TweetCell.m */,
 				42CC89C017B0F03E00B6D34B /* TweetCell.xib */,
@@ -345,6 +353,7 @@
 			files = (
 				42CC89AB17B0C31900B6D34B /* SignedOutVC.xib in Resources */,
 				42CC893617AF4C6A00B6D34B /* InfoPlist.strings in Resources */,
+				10D20A28189DAA380090EC82 /* EditableCell.xib in Resources */,
 				42CC893E17AF4C6B00B6D34B /* Images.xcassets in Resources */,
 				42C55E07181209DE000F9FCF /* TweetCell.xib in Resources */,
 				10D20A20189D84930090EC82 /* TweetNew.xib in Resources */,
@@ -408,6 +417,7 @@
 				42CC89B417B0D63C00B6D34B /* RestObject.m in Sources */,
 				42CC895D17AF6FBB00B6D34B /* TimelineVC.m in Sources */,
 				10D20A1E189D7EF90090EC82 /* TweetDetailViewController.m in Sources */,
+				10D20A27189DAA380090EC82 /* EditableCell.m in Sources */,
 				42CC893C17AF4C6B00B6D34B /* AppDelegate.m in Sources */,
 				42CC893817AF4C6B00B6D34B /* main.m in Sources */,
 			);
