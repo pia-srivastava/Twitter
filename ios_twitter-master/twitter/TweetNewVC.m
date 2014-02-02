@@ -107,6 +107,7 @@
     
     // Configure the cell...
     NSString *theTweet = self.tweetToAdd;
+    NSLog(@"self.tweetToAdd is [%@]", self.tweetToAdd);
     cell.tweetToAdd.text = theTweet;
     
     [cell.tweetToAdd becomeFirstResponder];
