@@ -50,11 +50,10 @@
 
 -(void)onTweetButton:(NSString *)tweet {
     
-    self.tweetToAdd = tweet;
-    [self.tableView reloadData];
-    NSLog(@"We are now going to add this tweet [%@]", tweet);
+    NSString *theTweetToAdd = [[NSUserDefaults standardUserDefaults] objectForKey:@"tweetToAdd"];
+    NSLog(@"We are now going to add this tweet [%@]", theTweetToAdd);
     
-// https://api.twitter.com/1/statuses/update.json
+    [[TwitterClient instance] postATweet:theTweetToAdd];
 
 }
 
@@ -102,22 +101,41 @@
                                        
                                    }];
     
-    //Tweet to add
-   //cell.tweetToAdd.text = @"";
-    
-    // Configure the cell...
-    NSString *theTweet = self.tweetToAdd;
-    NSLog(@"self.tweetToAdd is [%@]", self.tweetToAdd);
-    cell.tweetToAdd.text = theTweet;
-    
+    NSString *newTweet = self.tweetToAdd;
+    cell.tweetToAdd.text = newTweet;
+
     [cell.tweetToAdd becomeFirstResponder];
     cell.tweetToAdd.delegate = self;
-    
-    return cell;
+
+    NSLog(@"cellForRowAtIndexPath, self.tweetToAdd is %@", self.tweetToAdd);
+
+     return cell;
 }
 
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    
+    
+    NSLog(@"shouldChangeText");
+    NSString *text1 = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    //this is where i would put in validation if I wouldn't want the user to type in certain things
+    
+   	self.tweetToAdd = text1;
+    [[NSUserDefaults standardUserDefaults] setObject:self.tweetToAdd forKey:@"tweetToAdd"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
+    
+    [self.tableView reloadData];
+    
+    NSLog(@"shouldChangeText, self.tweetToAdd is %@", self.tweetToAdd);
+    
+    return YES;
+}
+
+
 -(BOOL)textViewShouldBeginEditing:(UITextView *)textView {
-    //NSLog(@"In textFieldShouldBeginEditing");
 	return YES;
 }
 
