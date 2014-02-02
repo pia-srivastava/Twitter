@@ -7,10 +7,11 @@
 //
 
 #import "TweetNewVC.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface TweetNewVC ()
 
-- (void)onTweetButton;
+- (void)onTweetButton:(NSString *)tweet;
 
 @end
 
@@ -34,9 +35,11 @@
     [self.navigationController.navigationBar setTintColor:twitterBlue];
     [self.navigationController.navigationBar setBarTintColor:twitterGrey];
     
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButton)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Tweet" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButton)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButton:)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Tweet" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButton:)];
     
+    UINib *editableNib = [UINib nibWithNibName:@"EditableCell" bundle:nil];
+    [self.tableView registerNib:editableNib forCellReuseIdentifier:@"EditableCell"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -45,8 +48,14 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)onTweetButton{
-    NSLog(@"We pressed tweet! Oh boy!");
+-(void)onTweetButton:(NSString *)tweet {
+    
+    self.tweetToAdd = tweet;
+    [self.tableView reloadData];
+    NSLog(@"We are now going to add this tweet [%@]", tweet);
+    
+// https://api.twitter.com/1/statuses/update.json
+
 }
 
 #pragma mark - Table view data source
@@ -64,15 +73,19 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:(NSString *) forIndexPath:indexPath];
-    Tweet *tweet = self.tweets[indexPath.row];
-    cell.username1.text = tweet.username;
-    cell.text.text = tweet.text;
+    static NSString *CellIdentifier = @"EditableCell";
+    EditableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
+    //Name
+    cell.name.text = self.username;
+    
+    //Handle
+    cell.handle.text = self.handle;
+ 
     //User photo
-    NSURL *userphotoLink = [NSURL URLWithString:tweet.userphoto];
+    NSURL *userphotoLink = [NSURL URLWithString:self.userImageLink];
     __weak UITableViewCell *weakCell = cell;
-    [cell.userphoto setImageWithURLRequest:[[NSURLRequest alloc] initWithURL:userphotoLink]
+    [cell.imageView setImageWithURLRequest:[[NSURLRequest alloc] initWithURL:userphotoLink]
                           placeholderImage:[UIImage imageNamed:@"placeholder.png"]
                                    success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image){
                                        weakCell.imageView.image = image;
@@ -89,49 +102,50 @@
                                        
                                    }];
     
+    //Tweet to add
+   //cell.tweetToAdd.text = @"";
     
-    //Screen name/handle
-    NSString *ampersand = @"@";
-    NSString *handlePlus = [ampersand stringByAppendingString:tweet.handle];
-    cell.handle.text = handlePlus;
+    // Configure the cell...
+    NSString *theTweet = self.tweetToAdd;
+    cell.tweetToAdd.text = theTweet;
     
-    //Retweeted by
-    int retweetedCount = tweet.retweetedCount;
-    NSLog(@"retweeted count is %i", retweetedCount);
-    NSLog(@"retweetedBy is %@",  tweet.retweetedBy);
-    
-    if(retweetedCount > 0){
-        NSLog(@"retweetedBy is %@", tweet.retweetedBy);
-        cell.retweetedBy.text = tweet.retweetedBy;
-    }
-    NSLog(@"tweet.from_user is %@",tweet.username );
-    NSLog(@"tweet.text is %@",tweet.text );
+    [cell.tweetToAdd becomeFirstResponder];
+    cell.tweetToAdd.delegate = self;
     
     return cell;
+}
+
+-(BOOL)textViewShouldBeginEditing:(UITextView *)textView {
+    //NSLog(@"In textFieldShouldBeginEditing");
+	return YES;
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSLog(@"heightForRowAtIndexPath!!!!");
-    Tweet *tweet = self.tweets[indexPath.row];
-    
-    UITextView *textView = [[UITextView alloc] init];
-    NSString *theText = tweet.text;
-    [textView setAttributedText:[[NSAttributedString alloc] initWithString:theText]];
-    
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    CGFloat width = screenRect.size.width;
-    width -= 64;
-    
-    UIFont *font = [UIFont fontWithName:@"Helvetica Neue" size:14];
-    CGRect textRect = [textView.text boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font}context:nil];
-    
-    CGFloat h = textRect.size.height + 80;
-    
-    NSLog(@"returning %f", h);
+//    Tweet *tweet = self.tweets[indexPath.row];
+//    
+//    UITextView *textView = [[UITextView alloc] init];
+//    NSString *theText = tweet.text;
+//    [textView setAttributedText:[[NSAttributedString alloc] initWithString:theText]];
+//    
+//    CGRect screenRect = [[UIScreen mainScreen] bounds];
+//    CGFloat width = screenRect.size.width;
+//    width -= 64;
+//    
+//    UIFont *font = [UIFont fontWithName:@"Helvetica Neue" size:14];
+//    CGRect textRect = [textView.text boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font}context:nil];
+//    
+//    CGFloat h = textRect.size.height + 80;
+//
+//    NSLog(@"returning %f", h);
+//    CGFloat h = [[UIScreen mainScreen]bounds].size.height;
+    CGFloat h = 200;
     return h;
     
 }
+
+
 
 @end

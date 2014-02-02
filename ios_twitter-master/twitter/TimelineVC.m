@@ -95,7 +95,6 @@
                           placeholderImage:[UIImage imageNamed:@"placeholder.png"]
                                    success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image){
                                        weakCell.imageView.image = image;
-                                        NSLog(@"success Block");
                                        
                                        //only required if no placeholder is set to force the imageview on the cell to be laid out to house the new image.
                                        //if(weakCell.imageView.frame.size.height==0 || weakCell.imageView.frame.size.width==0 ){
@@ -123,8 +122,6 @@
         NSLog(@"retweetedBy is %@", tweet.retweetedBy);
         cell.retweetedBy.text = tweet.retweetedBy;
     }
-    NSLog(@"tweet.from_user is %@",tweet.username );
-    NSLog(@"tweet.text is %@",tweet.text );
     
     return cell;
 }
@@ -132,7 +129,6 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSLog(@"heightForRowAtIndexPath!!!!");
     Tweet *tweet = self.tweets[indexPath.row];
     
     UITextView *textView = [[UITextView alloc] init];
@@ -148,7 +144,6 @@
     
     CGFloat h = textRect.size.height + 80;
     
-    NSLog(@"returning %f", h);
     return h;
     
 }
@@ -177,44 +172,6 @@
 //    
 //}
 
-/*
- // Override to support conditional editing of the table view.
- - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the specified item to be editable.
- return YES;
- }
- */
-
-/*
- // Override to support editing the table view.
- - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
- {
- if (editingStyle == UITableViewCellEditingStyleDelete) {
- // Delete the row from the data source
- [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
- }
- else if (editingStyle == UITableViewCellEditingStyleInsert) {
- // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
- }
- }
- */
-
-/*
- // Override to support rearranging the table view.
- - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
- {
- }
- */
-
-/*
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the item to be re-orderable.
- return YES;
- }
- */
 
 #pragma mark - Table view delegate
 
@@ -241,16 +198,18 @@
 }
 
 - (void)onNewButton {
-    NSLog(@"we clicked the new button, we really did!");
-    
-    [self.navigationController pushViewController:[[TweetNewVC alloc] init] animated:YES];
-//    UIViewController *newTweet = [[UIViewController alloc] initWithNibName:@"TweetNew" bundle:[NSBundle mainBundle]];
-//    [self.view addSubview:newTweet.view];
+
+    Tweet *tweet = self.tweets[0];
+    TweetNewVC *newTweet = [[TweetNewVC alloc] init];
+    newTweet.userImageLink = tweet.userphoto;
+    newTweet.username = tweet.username;
+    newTweet.handle = tweet.handle;
+    [self.navigationController pushViewController:newTweet animated:YES];
 }
 
 - (void)reload {
     [[TwitterClient instance] homeTimelineWithCount:20 sinceId:0 maxId:0 success:^(AFHTTPRequestOperation *operation, id response) {
-        NSLog(@"The whole response is [%@]", response);
+        //NSLog(@"The whole response is [%@]", response);
         self.tweets = [Tweet tweetsWithArray:response];
         [self.tableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
