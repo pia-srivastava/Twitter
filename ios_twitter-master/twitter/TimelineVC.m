@@ -199,11 +199,21 @@
 
 - (void)onNewButton {
 
-    Tweet *tweet = self.tweets[0];
     TweetNewVC *newTweet = [[TweetNewVC alloc] init];
-    newTweet.userImageLink = tweet.userphoto;
-    newTweet.username = tweet.username;
-    newTweet.handle = tweet.handle;
+    
+    User *currentUser = [User currentUser];
+    NSLog(@"currentUser is [%@]",currentUser);
+    NSDictionary *currentUsername = [currentUser valueOrNilForKeyPath:@"name"];
+    NSDictionary *currentHandle = [currentUser valueOrNilForKeyPath:@"screen_name"];
+    NSDictionary *currentImageLink = [currentUser valueOrNilForKeyPath:@"profile_image_url"];
+    NSLog(@"currentUsername is [%@]",currentUsername);
+    NSLog(@"currentHandle is [%@]",currentHandle);
+    NSLog(@"currentImageLink is [%@]",currentImageLink);
+    
+    newTweet.userImageLink = (NSString *)currentImageLink;
+    newTweet.username = (NSString *)currentUsername;
+    newTweet.handle = (NSString *)currentHandle;
+    
     [self.navigationController pushViewController:newTweet animated:YES];
 }
 

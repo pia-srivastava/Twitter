@@ -12,6 +12,7 @@
 @interface TweetNewVC ()
 
 - (void)onTweetButton:(NSString *)tweet;
+- (void)onCancelButton;
 
 @end
 
@@ -35,7 +36,7 @@
     [self.navigationController.navigationBar setTintColor:twitterBlue];
     [self.navigationController.navigationBar setBarTintColor:twitterGrey];
     
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButton:)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(onCancelButton:)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Tweet" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButton:)];
     
     UINib *editableNib = [UINib nibWithNibName:@"EditableCell" bundle:nil];
@@ -52,9 +53,13 @@
     
     NSString *theTweetToAdd = [[NSUserDefaults standardUserDefaults] objectForKey:@"tweetToAdd"];
     NSLog(@"We are now going to add this tweet [%@]", theTweetToAdd);
-    
-    [[TwitterClient instance] postATweet:theTweetToAdd];
 
+    [[TwitterClient instance] postATweet:theTweetToAdd success:^(AFHTTPRequestOperation *operation, id response) {
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                NSLog(@"Pia, the unfortunate error is [%@]", error);
+    }];
+
+       
 }
 
 #pragma mark - Table view data source
@@ -163,6 +168,11 @@
     CGFloat h = 200;
     return h;
     
+}
+
+- (IBAction)onCancelButton:(id)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 

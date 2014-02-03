@@ -66,31 +66,11 @@ static NSString * const kAccessTokenKey = @"kAccessTokenKey";
 }
 
 #pragma mark - Post a tweet API
-//- (void)postATweet:(NSString *)theTweet success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
-//   
-//    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"status": theTweet}];
-//    [self getPath:@"1.1/statuses/update.json" parameters:params success:success failure:failure];
-//}
+- (void)postATweet:(NSString *)tweet success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"status": tweet}];
 
-- (void)postATweet:(NSString *)theTweet{
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:TWITTER_BASE_URL];
-    [httpClient setParameterEncoding:AFFormURLParameterEncoding];
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
-                                                            path:@"https://api.twitter.com/1.1/statuses/update.json"
-                                                      parameters:@{@"status":theTweet}];
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [httpClient registerHTTPOperationClass:[AFHTTPRequestOperation class]];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        // Print the response body in text
-        NSLog(@"Response: %@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-    }];
-    [operation start];
-
-    
+    [self postPath:@"1.1/statuses/update.json" parameters:params success:success failure:failure];
 }
-
 
 #pragma mark - Private methods
 
