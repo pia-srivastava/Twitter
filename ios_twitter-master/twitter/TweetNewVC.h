@@ -18,6 +18,8 @@
 //For passing from previous screen
 @property(nonatomic,weak) NSString *userImageLink;
 @property(nonatomic,weak) NSString *username;
+@property(nonatomic,weak) NSString *replyToUsername;
+@property int inReplyToStatusId;
 @property(nonatomic,weak) NSString *handle;
 @property(nonatomic,weak) NSString *tweetToAdd;
 

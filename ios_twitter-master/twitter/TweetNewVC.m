@@ -12,7 +12,6 @@
 @interface TweetNewVC ()
 
 - (void)onTweetButton:(NSString *)tweet;
-- (void)onCancelButton;
 
 @end
 
@@ -41,6 +40,7 @@
     
     UINib *editableNib = [UINib nibWithNibName:@"EditableCell" bundle:nil];
     [self.tableView registerNib:editableNib forCellReuseIdentifier:@"EditableCell"];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -53,14 +53,24 @@
     
     NSString *theTweetToAdd = [[NSUserDefaults standardUserDefaults] objectForKey:@"tweetToAdd"];
     NSLog(@"We are now going to add this tweet [%@]", theTweetToAdd);
-
-    [[TwitterClient instance] postATweet:theTweetToAdd success:^(AFHTTPRequestOperation *operation, id response) {
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                NSLog(@"Pia, the unfortunate error is [%@]", error);
+    
+    [[TwitterClient instance] postATweet:theTweetToAdd inReplyToId:self.inReplyToStatusId success:^(AFHTTPRequestOperation *operation, id response) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Pia, the unfortunate error is [%@]", error);
     }];
-
-       
 }
+
+//Keep in case
+//-(void)onTweetButton:(NSString *)tweet {
+//    
+//    NSString *theTweetToAdd = [[NSUserDefaults standardUserDefaults] objectForKey:@"tweetToAdd"];
+//    NSLog(@"We are now going to add this tweet [%@]", theTweetToAdd);
+//
+//    [[TwitterClient instance] postATweet:theTweetToAdd success:^(AFHTTPRequestOperation *operation, id response) {
+//            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                NSLog(@"Pia, the unfortunate error is [%@]", error);
+//    }];
+//}
 
 #pragma mark - Table view data source
 

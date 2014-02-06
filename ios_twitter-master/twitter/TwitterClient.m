@@ -65,12 +65,43 @@ static NSString * const kAccessTokenKey = @"kAccessTokenKey";
     [self getPath:@"1.1/statuses/home_timeline.json" parameters:params success:success failure:failure];
 }
 
-#pragma mark - Post a tweet API
-- (void)postATweet:(NSString *)tweet success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+#pragma mark - Post or reply to a tweet API 
+- (void)postATweet:(NSString *)tweet inReplyToId:(int)inReplyToId success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"status": tweet}];
-
+    
+    if (inReplyToId > 0) {
+        [params setObject:@(inReplyToId) forKey:@"in_reply_to_status_id"];
+    }
+    
     [self postPath:@"1.1/statuses/update.json" parameters:params success:success failure:failure];
 }
+
+#pragma mark - Post or reply to a tweet API
+- (void)retweet:(NSString *)tweet inReplyToId:(NSString *)inReplyToId success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+//    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"in_reply_to_status_id": inReplyToId}];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"id": inReplyToId}];
+    
+    
+//    if (inReplyToId > 0) {
+//        [params setObject:@(inReplyToId) forKey:@"in_reply_to_status_id"];
+//    }
+
+    // http://api.twitter.com/1/statuses/retweet/3962807808.json
+    NSString *postPath = @"1.1/statuses/retweet/";
+    NSString *postPathFull = [postPath stringByAppendingString:[NSString stringWithFormat:@"%@%@", inReplyToId, @".json"]];
+    [self postPath:postPathFull parameters:params success:success failure:failure];
+}
+
+
+
+
+//Keep in case
+//#pragma mark - Post a tweet API
+//- (void)postATweet:(NSString *)tweet success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+//    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"status": tweet}];
+//
+//    [self postPath:@"1.1/statuses/update.json" parameters:params success:success failure:failure];
+//}
 
 #pragma mark - Private methods
 

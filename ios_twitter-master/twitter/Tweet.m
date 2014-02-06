@@ -24,7 +24,6 @@
     return [userInfo valueForKey:@"screen_name"];
 }
 
-
 - (NSString *)userphoto {
     NSDictionary *userInfo = [self.data valueOrNilForKeyPath:@"user"];
     return [userInfo valueForKey:@"profile_image_url"];
@@ -37,9 +36,19 @@
 - (NSString *)retweetedBy {
     NSDictionary *retweetedStatus = [self.data valueOrNilForKeyPath:@"retweeted_status"];
     return [retweetedStatus valueForKey:@"contributors"];
-
 }
 
+- (NSString *)createdAt {
+    return [self.data valueOrNilForKeyPath:@"created_at"];
+}
+
+- (NSString *)favoritesCount {
+    NSDictionary *userInfo = [self.data valueOrNilForKeyPath:@"user"];
+    return [userInfo valueForKey:@"favourites_count"];
+}
+
+- (NSString *)tweetId {
+    return [self.data valueOrNilForKeyPath:@"id_str"];}
 
 + (NSMutableArray *)tweetsWithArray:(NSArray *)array {
     NSMutableArray *tweets = [[NSMutableArray alloc] initWithCapacity:array.count];

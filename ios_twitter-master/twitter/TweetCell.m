@@ -7,6 +7,8 @@
 //
 
 #import "TweetCell.h"
+#import "TweetNewVC.h"
+#import "TimelineVC.h"
 
 @implementation TweetCell
 
@@ -25,5 +27,25 @@
 
     // Configure the view for the selected state
 }
+
+- (IBAction)onReplyButton:(id)sender {
+      NSLog(@"TweetCell: just pressed reply button");
+    
+    [self.delegate onReplyButton:sender tweet:self.tweet];
+}
+
+- (IBAction)onRetweetButton:(id)sender {
+    [self.delegate onRetweetButton:sender tweet:self.tweet];
+}
+
+
+//
+//- (IBAction)onRetweetButton:(id)sender {
+//    NSLog(@"just pressed retweet button");
+//}
+//
+//- (IBAction)onFavoriteButton:(id)sender {
+//    NSLog(@"just pressed favorite button");
+//}
 
 @end

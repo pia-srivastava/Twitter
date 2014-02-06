@@ -11,6 +11,7 @@
 #import "UIImageView+AFNetworking.h"
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "TweetNewVC.h"
+#import "TweetDetailViewController.h"
 
 @interface TimelineVC ()
 
@@ -18,7 +19,7 @@
 
 - (void)onSignOutButton;
 - (void)reload;
-- (void)onNewButton;
+
 
 @end
 
@@ -50,7 +51,7 @@
     
     //Sign Out
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sign Out" style:UIBarButtonItemStylePlain target:self action:@selector(onSignOutButton)];
-
+    
     //New Tweet!
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(onNewButton)];
     
@@ -84,10 +85,14 @@
     
     static NSString *CellIdentifier = @"TweetCell";
     TweetCell *cell = (TweetCell *) [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    cell.delegate = self;
     Tweet *tweet = self.tweets[indexPath.row];
+    cell.tweet = tweet;
     cell.username1.text = tweet.username;
     cell.text.text = tweet.text;
-
+    cell.text.tag = indexPath.row;
+    
+    
     //User photo
     NSURL *userphotoLink = [NSURL URLWithString:tweet.userphoto];
     __weak UITableViewCell *weakCell = cell;
@@ -107,11 +112,21 @@
                                        
                                    }];
     
-
+    
     //Screen name/handle
     NSString *ampersand = @"@";
     NSString *handlePlus = [ampersand stringByAppendingString:tweet.handle];
     cell.handle.text = handlePlus;
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init] ;
+    [dateFormatter setDateFormat:@"eee, dd MMM yyyy HH:mm:ss ZZZZ"];
+    NSDate *createdDate = [dateFormatter dateFromString:tweet.createdAt];
+    NSDate *now = [NSDate date];
+    
+    //    NSTimeInterval secondsBetween = [now timeIntervalSinceDate:createdDate];
+    //    int numberOfDays = secondsBetween / 86400;
+    //    NSLog(@"secondsBetween is [%d]", secondsBetween);
+    //
     
     //Retweeted by
     int retweetedCount = tweet.retweetedCount;
@@ -122,62 +137,86 @@
         NSLog(@"retweetedBy is %@", tweet.retweetedBy);
         cell.retweetedBy.text = tweet.retweetedBy;
     }
-    
+
     return cell;
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+    //NSLog(@"heightForRowAtIndexPath!!!!");
     Tweet *tweet = self.tweets[indexPath.row];
     
-    UITextView *textView = [[UITextView alloc] init];
-    NSString *theText = tweet.text;
-    [textView setAttributedText:[[NSAttributedString alloc] initWithString:theText]];
+    /*OLD considers only textView */
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat width = screenRect.size.width;
     width -= 64;
     
-    UIFont *font = [UIFont fontWithName:@"Helvetica Neue" size:14];
-    CGRect textRect = [textView.text boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font}context:nil];
+    //GET SIZE OF RETWEET USERNAME
+    UILabel *retLabel = [[UILabel alloc] init];
+    //TODO add the retweeter field here (retweeted by so and so)
+    NSString *retString = @"retweeter";
+    [retLabel setAttributedText:[[NSAttributedString alloc] initWithString:retString]];
+    CGRect retRect = [retLabel.text boundingRectWithSize:CGSizeMake(width, MAXFLOAT)
+                                                 options:NSStringDrawingUsesLineFragmentOrigin
+                                              attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12]}
+                                                 context:nil];
+    CGFloat retUserHeight = retRect.size.height;
     
-    CGFloat h = textRect.size.height + 80;
+    
+    // GET SIZE OF LABELS
+    UILabel *label = [[UILabel alloc] init];
+    NSString *labelString = tweet.username;
+    
+    [label setAttributedText:[[NSAttributedString alloc] initWithString:labelString]];
+    CGRect labelRect = [label.text boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:13]} context:nil];
+    CGFloat labelHeight = labelRect.size.height;
+    
+    
+    //GET SIZE OF TEXTVIEW
+    UITextView *textView = [[UITextView alloc] init];
+    NSString *theText = tweet.text;
+    [textView setAttributedText:[[NSAttributedString alloc] initWithString:theText]];
+    
+    CGRect textRect = [textView.text boundingRectWithSize:CGSizeMake(width, MAXFLOAT)
+                                                  options:NSStringDrawingUsesLineFragmentOrigin
+                                               attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:14]}
+                                                  context:nil];
+    CGFloat textHeight = textRect.size.height + 20;
+    
+    // GETSIZE OF ICONS
+    CGFloat iconHeight = 20;
+    
+    //ADD ALL OF THE CONTROL HEIGHTS UP
+    CGFloat h = retUserHeight + 10 + labelHeight + 10 + textHeight + 10 + iconHeight + 20;
     
     return h;
-    
 }
-
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    
-//    NSLog(@"heightForRowAtIndexPath!!!!");
-//    
-//    UITextView *textView = [[UITextView alloc] init];
-//    NSString *theText = [self.toDoItems objectAtIndex:indexPath.row];
-//    [textView setAttributedText:[[NSAttributedString alloc] initWithString:theText]];
-//    
-//    CGRect screenRect = [[UIScreen mainScreen] bounds];
-//    CGFloat width = screenRect.size.width;
-//    width -= 64;
-//    
-//    UIFont *font = [UIFont fontWithName:@"Helvetica Neue" size:14];
-//    //    CGRect textRect = [theText boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:font}context:nil];
-//    
-//    CGRect textRect = [textView.text boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font}context:nil];
-//    
-//    CGFloat h = textRect.size.height + 30;
-//    
-//    NSLog(@"returning %f", h);
-//    return h;
-//    
-//}
 
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    Tweet *tweet = self.tweets[indexPath.row];
+    TweetDetailViewController *detailViewController = [[TweetDetailViewController alloc] initWithNibName:@"TweetDetailViewController" bundle:nil];
+    
+    detailViewController.username = tweet.username;
+    detailViewController.userImageLink = tweet.userphoto;
+    detailViewController.handle = tweet.handle;
+    detailViewController.tweetText = tweet.text;
+    detailViewController.createdAt = tweet.createdAt;
+    detailViewController.favoritesCount = tweet.favoritesCount;
+    detailViewController.retweetCount = tweet.retweetedCount;
+    detailViewController.createdAt = tweet.createdAt;
+    NSInteger val = [tweet.tweetId integerValue];
+    detailViewController.onReplyStatusId = val;
+    
+    [self.navigationController pushViewController:detailViewController animated:YES];
 }
+
 
 /*
  #pragma mark - Navigation
@@ -198,7 +237,7 @@
 }
 
 - (void)onNewButton {
-
+    
     TweetNewVC *newTweet = [[TweetNewVC alloc] init];
     
     User *currentUser = [User currentUser];
@@ -227,4 +266,38 @@
     }];
 }
 
+-(void)onReplyButton:(id)sender tweet:(Tweet *)tweet {
+    TweetNewVC *newTweet = [[TweetNewVC alloc] init];
+
+    User *currentUser = [User currentUser];
+    NSDictionary *currentUsername = [currentUser valueOrNilForKeyPath:@"name"];
+    NSDictionary *currentHandle = [currentUser valueOrNilForKeyPath:@"screen_name"];
+    NSDictionary *currentImageLink = [currentUser valueOrNilForKeyPath:@"profile_image_url"];
+
+    newTweet.userImageLink = (NSString *)currentImageLink;
+    newTweet.username = (NSString *)currentUsername;
+    newTweet.handle = (NSString *)currentHandle;
+
+    //To do the reply: supply the in_reply_to_status_id parameter with the tweet ID you're replying to, and begin the tweet with the @username who authored the tweet being replied to.
+    NSInteger val = [tweet.tweetId integerValue];
+    newTweet.inReplyToStatusId = val;
+    NSString *replyToUsername = [@"@" stringByAppendingString:tweet.username];
+    newTweet.tweetToAdd = replyToUsername;
+    
+    [self.navigationController pushViewController:newTweet animated:YES];
+
+}
+
+-(void)onRetweetButton:(id)sender tweet:(Tweet *)tweet{
+    NSLog(@"just pressed retweet");
+    
+
+        NSLog(@"We are now going to retweet this [%@] with this tweetId [%@]", tweet.text, tweet.tweetId);
+    
+        [[TwitterClient instance] retweet:tweet.text inReplyToId:tweet.tweetId success:^(AFHTTPRequestOperation *operation, id response) {
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Pia, the unfortunate error is [%@]", error);
+        }];
+
+}
 @end
