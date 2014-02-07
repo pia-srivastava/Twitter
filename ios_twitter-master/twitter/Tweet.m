@@ -53,7 +53,7 @@
 
 -(bool)favorited{
     NSString *favoritedRaw = [self.data valueOrNilForKeyPath:@"favorited"];
-    NSLog(@"favorited in tweet.m is %@", favoritedRaw);
+    NSLog(@"favorited in tweet.m is [%@ ]for tweet [%@]", favoritedRaw, self.text);
   	NSString *tempString = [NSString stringWithFormat:@"%@", favoritedRaw];
 
     if([tempString isEqualToString:@"0"]){

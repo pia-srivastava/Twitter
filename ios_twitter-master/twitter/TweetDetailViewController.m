@@ -25,6 +25,9 @@
     self = [super initWithNibName:@"TweetDetailViewController" bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        
+        
+        
     }
     return self;
 }
@@ -101,4 +104,13 @@
 - (void)onFavoriteButton{
     NSLog(@"on reply");
 }
+
+- (void) myMethod
+{
+    // All instances of myClassA will be notified
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName:@"myTestNotification"
+     object:self];
+}
+
 @end
