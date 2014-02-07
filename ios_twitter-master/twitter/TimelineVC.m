@@ -17,6 +17,7 @@
 
 @property (nonatomic, strong) NSMutableArray *tweets;
 @property (nonatomic, strong) NSString *favoriteOrUnfavorite;
+-(void)refreshView:(UIRefreshControl *)refresh;
 
 - (void)onSignOutButton;
 - (void)reload;
@@ -30,6 +31,14 @@
 {
     self = [super initWithStyle:style];
     if (self) {
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(myTestNotificationReceived:)
+                                                     name:@"myTestNotification"
+                                                   object:nil];
+        
+        
+        
         self.title = @"Home";
         
         [self reload];
@@ -55,6 +64,13 @@
     
     //New Tweet!
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(onNewButton)];
+    
+    //Refresh Control
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
+    [refresh addTarget:self action:@selector(refreshView:)
+      forControlEvents:UIControlEventValueChanged];
+    self.refreshControl = refresh;
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -305,27 +321,25 @@
 -(void)onFavoriteButton:(id)sender tweet:(Tweet *)tweet{
     
     NSLog(@"onFavoriteButton, tweet.favorited is %d",tweet.favorited);
+    NSLog(@"onFavoriteButton, tweet.text is [%@]",tweet.text);
+
+    UIButton *button = sender;
+
     
-    if(!tweet.favorited){
+//    if(tweet.favorited == false){
+    if(button.tag != 1){
         NSLog(@"!tweet.favorited");
         [[TwitterClient instance] favorite:tweet.tweetId success:^(AFHTTPRequestOperation *operation, id response) {
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Pia, the unfortunate error is [%@]", error);
         }];
-        
+            button.tag = 1;
         tweet.favorited = true;
         [sender setImage:[UIImage imageNamed:@"twitter_icons_star_on.png"] forState:UIControlStateNormal];
-        int temp;
-        if(tweet.favorited == 1){
-            temp = 1;
-        }
-        else{
-            temp =0;
-        }
-        NSLog(@"Now, within the favoriting the onFavoriteButton, the tweet.favorited value is %i", temp);
+        NSLog(@"Now, within the favoriting the onFavoriteButton, the tweet.favorited value is %d", tweet.favorited);
 
     }
-    else{
+    else {
         NSLog(@"tweet.favorited is else");
         [[TwitterClient instance] unfavorite:tweet.tweetId success:^(AFHTTPRequestOperation *operation, id response) {
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -333,12 +347,33 @@
         }];
         
         [sender setImage:[UIImage imageNamed:@"twitter_icons_star_off.png"] forState:UIControlStateNormal];
-        tweet.favorited = NO;
+        button.tag = 0;
+        tweet.favorited = false;
         NSLog(@"Now, within the unfavoriting the onFavoriteButton, the tweet.favorited value is %d", tweet.favorited);
     }
     
     NSLog(@"Now, leaving the onFavoriteButton, the tweet.favorited value is %d", tweet.favorited);
 }
+
+-(void)refreshView:(UIRefreshControl *)refresh {
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
+    
+    // custom refresh logic would be placed here...
+    [self reload];
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"MMM d, h:mm a"];
+    NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [formatter stringFromDate:[NSDate date]]];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:lastUpdated];
+    [refresh endRefreshing];
+}
+
+- (void) myTestNotificationReceived:(NSNotification *) notification
+{
+    if ([[notification name] isEqualToString:@"myTestNotification"])
+        NSLog (@"Notification is successfully received!");
+}
+
 
 
 //Make the tweet you just added show up here!
@@ -399,6 +434,9 @@
 //    return;
 
 //}
+
+
+
 
 
 @end
