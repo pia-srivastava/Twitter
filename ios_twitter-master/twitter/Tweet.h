@@ -10,17 +10,21 @@
 
 @interface Tweet : RestObject
 
-@property (nonatomic, strong, readonly) NSString *text;
-@property (nonatomic, strong, readonly) NSString *username;
-@property (nonatomic, strong, readonly) NSString *handle;
-@property (nonatomic, strong, readonly) NSString *usernamePlusStatus;
+@property (nonatomic, strong) NSString *text;
+@property (nonatomic, strong) NSString *username;
+@property (nonatomic, strong) NSString *handle;
+@property (nonatomic, strong) NSString *usernamePlusStatus;
 @property (nonatomic,weak)NSString *userphoto;
-@property (nonatomic, strong, readonly) NSString *retweetedBy;
-@property (nonatomic, readonly) NSString *retweetedCount;
-@property (nonatomic, readonly) NSString *createdAt;
-@property (nonatomic, readonly) NSString *favoritesCount;
-@property (nonatomic, readonly) NSString *tweetId;
+@property (nonatomic, strong) NSString *retweetedBy;
+@property (nonatomic) NSString *retweetedCount;
+@property (nonatomic) NSString *createdAt;
+@property (nonatomic) NSString *favoritesCount;
+@property (nonatomic) NSString *tweetId;
+@property (nonatomic) bool favorited;
+@property (nonatomic) bool retweeted;
+
 
 + (NSMutableArray *)tweetsWithArray:(NSArray *)array;
+- (id) initNewTweet:(NSString*) tweetText;
 
 @end

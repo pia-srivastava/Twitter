@@ -11,6 +11,7 @@
 @protocol TweetCellDelegate
 -(void)onReplyButton:(id)sender tweet:(Tweet *)tweet;
 -(void)onRetweetButton:(id)sender tweet:(Tweet *)tweet;
+-(void)onFavoriteButton:(id)sender tweet:(Tweet *)tweet;
 
 @end
 
@@ -22,11 +23,15 @@
 @property (weak, nonatomic) IBOutlet UILabel *retweetedBy;
 @property (weak, nonatomic) IBOutlet UIImageView *userphoto;
 @property (weak, nonatomic) IBOutlet UILabel *hoursSinceTweeted;
+@property (weak, nonatomic) IBOutlet UIButton *starButton;
+@property (weak, nonatomic) IBOutlet UIButton *replyButton;
+@property (weak, nonatomic) IBOutlet UIButton *reweetButton;
 
 @property (weak, nonatomic) Tweet *tweet;
 @property (weak, nonatomic) id<TweetCellDelegate>delegate;
 
 - (IBAction)onReplyButton:(id)sender;
 - (IBAction)onRetweetButton:(id)sender;
+- (IBAction)onFavoriteButton:(id)sender;
 
 @end

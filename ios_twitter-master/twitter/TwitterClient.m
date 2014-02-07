@@ -78,13 +78,8 @@ static NSString * const kAccessTokenKey = @"kAccessTokenKey";
 
 #pragma mark - Post or reply to a tweet API
 - (void)retweet:(NSString *)tweet inReplyToId:(NSString *)inReplyToId success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
-//    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"in_reply_to_status_id": inReplyToId}];
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"id": inReplyToId}];
     
-    
-//    if (inReplyToId > 0) {
-//        [params setObject:@(inReplyToId) forKey:@"in_reply_to_status_id"];
-//    }
 
     // http://api.twitter.com/1/statuses/retweet/3962807808.json
     NSString *postPath = @"1.1/statuses/retweet/";
@@ -93,15 +88,23 @@ static NSString * const kAccessTokenKey = @"kAccessTokenKey";
 }
 
 
+- (void)favorite:(NSString *)idOfFavorite success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"id": idOfFavorite}];
+    
+    //  https://api.twitter.com/1.1/favorites/create.json
+    NSString *postPath = @"1.1/favorites/create.json";
+    [self postPath:postPath parameters:params success:success failure:failure];
+}
 
 
-//Keep in case
-//#pragma mark - Post a tweet API
-//- (void)postATweet:(NSString *)tweet success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
-//    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"status": tweet}];
-//
-//    [self postPath:@"1.1/statuses/update.json" parameters:params success:success failure:failure];
-//}
+- (void)unfavorite:(NSString *)idOfFavorite success:(void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"id": idOfFavorite}];
+    
+    //  https://api.twitter.com/1.1/favorites/destroy.json
+    NSString *postPath = @"1.1/favorites/destroy.json";
+    [self postPath:postPath parameters:params success:success failure:failure];
+}
+
 
 #pragma mark - Private methods
 

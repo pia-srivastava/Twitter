@@ -33,7 +33,7 @@
                         <color key="highlightedColor" red="0.83060886548913038" green="0.83060886548913038" blue="0.83060886548913038" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="shadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </label>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="so and so retweeted" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D51-SI-KG0">
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D51-SI-KG0">
                         <rect key="frame" x="41" y="8" width="157" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -69,14 +69,14 @@
                             <action selector="onRetweetButton:" destination="26o-aF-4Jv" eventType="touchUpInside" id="CFG-ue-kqi"/>
                         </connections>
                     </button>
-                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="is0-uE-uuE">
+                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="starButton" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="is0-uE-uuE">
                         <rect key="frame" x="221" y="122" width="20" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <state key="normal" image="star.jpg">
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
                         <connections>
-                            <action selector="onFavoriteButton:" destination="26o-aF-4Jv" eventType="touchUpInside" id="MgW-c2-fXU"/>
+                            <action selector="onFavoriteButton:" destination="26o-aF-4Jv" eventType="touchUpInside" id="Sy4-45-zYF"/>
                         </connections>
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pNL-Gh-gGy">
@@ -91,7 +91,10 @@
             <connections>
                 <outlet property="handle" destination="99f-gb-thY" id="Gyh-tv-qS1"/>
                 <outlet property="hoursSinceTweeted" destination="Emh-Bg-sIi" id="c4Y-To-xhd"/>
+                <outlet property="replyButton" destination="Qu2-gz-aYK" id="gOp-Ea-ayD"/>
                 <outlet property="retweetedBy" destination="D51-SI-KG0" id="DDy-aA-aTC"/>
+                <outlet property="reweetButton" destination="QYg-Ln-94p" id="f3p-c5-4ux"/>
+                <outlet property="starButton" destination="is0-uE-uuE" id="OgN-zi-7oK"/>
                 <outlet property="text" destination="FVW-j5-1J9" id="Ehh-A0-nkR"/>
                 <outlet property="username1" destination="Gio-zX-kSZ" id="GAv-3u-msv"/>
                 <outlet property="userphoto" destination="TzJ-UQ-CPh" id="Ct8-cU-Jwb"/>

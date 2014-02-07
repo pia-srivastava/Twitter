@@ -35,7 +35,8 @@
 
 - (NSString *)retweetedBy {
     NSDictionary *retweetedStatus = [self.data valueOrNilForKeyPath:@"retweeted_status"];
-    return [retweetedStatus valueForKey:@"contributors"];
+    NSDictionary *user = [retweetedStatus valueOrNilForKeyPath:@"user"];
+    return [user valueForKey:@"screen_name"];
 }
 
 - (NSString *)createdAt {
@@ -50,6 +51,19 @@
 - (NSString *)tweetId {
     return [self.data valueOrNilForKeyPath:@"id_str"];}
 
+-(bool)favorited{
+    NSString *favoritedRaw = [self.data valueOrNilForKeyPath:@"favorited"];
+    NSLog(@"favorited in tweet.m is %@", favoritedRaw);
+  	NSString *tempString = [NSString stringWithFormat:@"%@", favoritedRaw];
+
+    if([tempString isEqualToString:@"0"]){
+        return NO;
+    }
+    else{
+        return YES;
+    }
+}
+
 + (NSMutableArray *)tweetsWithArray:(NSArray *)array {
     NSMutableArray *tweets = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (NSDictionary *params in array) {
@@ -58,4 +72,35 @@
     return tweets;
 }
 
+
+- (id) initNewTweet:(NSString*) tweetText
+{
+    self = [super init];
+    if (self ) {
+        //Tweet *newTweet = [[Tweet alloc] init];
+        User *currentUser = [User currentUser];
+        
+        self.text = tweetText;
+        self.userphoto = [currentUser objectForKey:@"profile_image_url"];
+        self.retweetedBy = [currentUser valueOrNilForKeyPath:@""];
+        self.username = [currentUser valueOrNilForKeyPath:@"name"];
+        self.handle= [currentUser valueOrNilForKeyPath:@"screen_name"];
+        
+        NSDate *currentDate = [NSDate date];
+        NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];
+        [dateFormatter2 setDateFormat:@"MM/dd/yy, HH:mm a"];
+        NSString *formattedDateString = [dateFormatter2 stringFromDate:currentDate];
+        
+        //        self.dateTime = formattedDateString;
+        
+        
+        //        self.retweete=@"0";
+        //        self.favoritesNumberString = @"0";
+        //        self.starButtonSelected = NO;
+        //        self.retweetButtonSelected = NO;
+        
+        
+    }
+    return self;
+}
 @end

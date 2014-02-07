@@ -38,6 +38,10 @@
     [self.delegate onRetweetButton:sender tweet:self.tweet];
 }
 
+- (IBAction)onFavoriteButton:(id)sender {
+    [self.delegate onFavoriteButton:sender tweet:self.tweet];
+}
+
 
 //
 //- (IBAction)onRetweetButton:(id)sender {

@@ -16,6 +16,7 @@
 @interface TimelineVC ()
 
 @property (nonatomic, strong) NSMutableArray *tweets;
+@property (nonatomic, strong) NSString *favoriteOrUnfavorite;
 
 - (void)onSignOutButton;
 - (void)reload;
@@ -91,6 +92,19 @@
     cell.username1.text = tweet.username;
     cell.text.text = tweet.text;
     cell.text.tag = indexPath.row;
+    if (tweet.retweetedBy != nil) {
+        NSString *retweetedText = [tweet.retweetedBy stringByAppendingString:@" retweeted"];
+        cell.retweetedBy.text = retweetedText;
+    }
+    
+    NSLog(@"tweet.favorited is %d", tweet.favorited);
+    if (tweet.favorited) {
+        [cell.starButton setImage:[UIImage imageNamed:@"twitter_icons_star_on.png"] forState:UIControlStateNormal];
+    }
+    else{
+        [cell.starButton setImage:[UIImage imageNamed:@"twitter_icons_star_off.png"] forState:UIControlStateNormal];
+    }
+    
     
     
     //User photo
@@ -130,23 +144,18 @@
     
     //Retweeted by
     int retweetedCount = tweet.retweetedCount;
-    NSLog(@"retweeted count is %i", retweetedCount);
-    NSLog(@"retweetedBy is %@",  tweet.retweetedBy);
     
     if(retweetedCount > 0){
-        NSLog(@"retweetedBy is %@", tweet.retweetedBy);
         cell.retweetedBy.text = tweet.retweetedBy;
     }
-
+    
     return cell;
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    //NSLog(@"heightForRowAtIndexPath!!!!");
-    Tweet *tweet = self.tweets[indexPath.row];
     
-    /*OLD considers only textView */
+    Tweet *tweet = self.tweets[indexPath.row];
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat width = screenRect.size.width;
@@ -241,13 +250,9 @@
     TweetNewVC *newTweet = [[TweetNewVC alloc] init];
     
     User *currentUser = [User currentUser];
-    NSLog(@"currentUser is [%@]",currentUser);
     NSDictionary *currentUsername = [currentUser valueOrNilForKeyPath:@"name"];
     NSDictionary *currentHandle = [currentUser valueOrNilForKeyPath:@"screen_name"];
     NSDictionary *currentImageLink = [currentUser valueOrNilForKeyPath:@"profile_image_url"];
-    NSLog(@"currentUsername is [%@]",currentUsername);
-    NSLog(@"currentHandle is [%@]",currentHandle);
-    NSLog(@"currentImageLink is [%@]",currentImageLink);
     
     newTweet.userImageLink = (NSString *)currentImageLink;
     newTweet.username = (NSString *)currentUsername;
@@ -258,7 +263,7 @@
 
 - (void)reload {
     [[TwitterClient instance] homeTimelineWithCount:20 sinceId:0 maxId:0 success:^(AFHTTPRequestOperation *operation, id response) {
-        //NSLog(@"The whole response is [%@]", response);
+//        NSLog(@"The whole response is [%@]", response);
         self.tweets = [Tweet tweetsWithArray:response];
         [self.tableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -268,16 +273,16 @@
 
 -(void)onReplyButton:(id)sender tweet:(Tweet *)tweet {
     TweetNewVC *newTweet = [[TweetNewVC alloc] init];
-
+    
     User *currentUser = [User currentUser];
     NSDictionary *currentUsername = [currentUser valueOrNilForKeyPath:@"name"];
     NSDictionary *currentHandle = [currentUser valueOrNilForKeyPath:@"screen_name"];
     NSDictionary *currentImageLink = [currentUser valueOrNilForKeyPath:@"profile_image_url"];
-
+    
     newTweet.userImageLink = (NSString *)currentImageLink;
     newTweet.username = (NSString *)currentUsername;
     newTweet.handle = (NSString *)currentHandle;
-
+    
     //To do the reply: supply the in_reply_to_status_id parameter with the tweet ID you're replying to, and begin the tweet with the @username who authored the tweet being replied to.
     NSInteger val = [tweet.tweetId integerValue];
     newTweet.inReplyToStatusId = val;
@@ -285,19 +290,115 @@
     newTweet.tweetToAdd = replyToUsername;
     
     [self.navigationController pushViewController:newTweet animated:YES];
-
+    
 }
 
 -(void)onRetweetButton:(id)sender tweet:(Tweet *)tweet{
-    NSLog(@"just pressed retweet");
     
+    [[TwitterClient instance] retweet:tweet.text inReplyToId:tweet.tweetId success:^(AFHTTPRequestOperation *operation, id response) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Pia, the unfortunate error is [%@]", error);
+    }];
+    
+}
 
-        NSLog(@"We are now going to retweet this [%@] with this tweetId [%@]", tweet.text, tweet.tweetId);
+-(void)onFavoriteButton:(id)sender tweet:(Tweet *)tweet{
     
-        [[TwitterClient instance] retweet:tweet.text inReplyToId:tweet.tweetId success:^(AFHTTPRequestOperation *operation, id response) {
+    NSLog(@"onFavoriteButton, tweet.favorited is %d",tweet.favorited);
+    
+    if(!tweet.favorited){
+        NSLog(@"!tweet.favorited");
+        [[TwitterClient instance] favorite:tweet.tweetId success:^(AFHTTPRequestOperation *operation, id response) {
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Pia, the unfortunate error is [%@]", error);
         }];
+        
+        tweet.favorited = true;
+        [sender setImage:[UIImage imageNamed:@"twitter_icons_star_on.png"] forState:UIControlStateNormal];
+        int temp;
+        if(tweet.favorited == 1){
+            temp = 1;
+        }
+        else{
+            temp =0;
+        }
+        NSLog(@"Now, within the favoriting the onFavoriteButton, the tweet.favorited value is %i", temp);
 
+    }
+    else{
+        NSLog(@"tweet.favorited is else");
+        [[TwitterClient instance] unfavorite:tweet.tweetId success:^(AFHTTPRequestOperation *operation, id response) {
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Pia, the unfortunate error is [%@]", error);
+        }];
+        
+        [sender setImage:[UIImage imageNamed:@"twitter_icons_star_off.png"] forState:UIControlStateNormal];
+        tweet.favorited = NO;
+        NSLog(@"Now, within the unfavoriting the onFavoriteButton, the tweet.favorited value is %d", tweet.favorited);
+    }
+    
+    NSLog(@"Now, leaving the onFavoriteButton, the tweet.favorited value is %d", tweet.favorited);
 }
+
+
+//Make the tweet you just added show up here!
+//- (void) viewWillAppear:(BOOL)animated {
+//
+////    NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
+////    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+//
+//    NSLog(@"View Will Appear");
+//
+//    NSString *theTweetToAdd = [[NSUserDefaults standardUserDefaults] objectForKey:@"newTweet"];
+//
+//    if (theTweetToAdd !=nil ) {
+//
+////        [[TwitterClient instance] homeTimelineWithCount:20 sinceId:0 maxId:0 success:^(AFHTTPRequestOperation *operation, id response) {
+////            //NSLog(@"%@", response);
+////            self.tweets = [Tweet tweetsWithArray:response];
+////
+////        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+////            // Do nothing
+////        }];
+////
+//        Tweet *newTweet = [[Tweet alloc] init];
+//
+//        NSLog(@"self.tweets.length is %d",[self.tweets count]);
+//        [self.tweets insertObject:[newTweet initNewTweet:theTweetToAdd] atIndex:0];
+//        NSLog(@"newTweet is %@",newTweet);
+//        NSLog(@"newTweet.username is %@",newTweet.username);
+//        NSLog(@"self.tweets.length is %d",[self.tweets count]);
+//
+//        [self.tableView reloadData];
+//        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"newTweet"];
+//        [[NSUserDefaults standardUserDefaults] synchronize];
+//
+//
+//    }
+
+//    NSMutableDictionary *changedTweetFromDetailView = [[NSUserDefaults standardUserDefaults] objectForKey:@"buttonChanges"];
+//
+//    if (changedTweetFromDetailView != nil) {
+//
+//        //Get the inde of the cell to replace with this updated tweet from Detail view
+//
+//        Tweet *tweet = [[Tweet alloc] init];
+//        Tweet *copyTweet = [[Tweet alloc] init];
+//        copyTweet = [tweet initFromDictionary:changedTweetFromDetailView];
+//        NSInteger cellIndex = [copyTweet.cellIndexString intValue];
+//
+//        [self.tweets insertObject:tweet atIndex:cellIndex];
+//
+//        [self.tableView reloadData];
+//        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"buttonChanges"];
+//        [[NSUserDefaults standardUserDefaults] synchronize];
+//    }
+
+
+
+//    return;
+
+//}
+
+
 @end
